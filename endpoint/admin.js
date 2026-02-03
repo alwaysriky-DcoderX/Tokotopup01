@@ -26,54 +26,47 @@ const { Otp } = require("../index.js");
 
 router.get("/atlantic/profile", requireAdmin, async (req, res) => {
   try {
-    console.log("🔄 Mengambil data profile dari Atlantic API...");
+    console.log("🔄 Mengambil profile Atlantic (API RESMI)...");
 
     const response = await axios.get(
-      "https://atlantich2h.com/get_profile",
+      "https://api.atlantich2h.com/get_profile",
       {
-        timeout: 15000,
-        headers: {
-          "Accept": "application/json",
-          "Authorization": `Bearer ${ATLAN_API_KEY}`,
-          "X-API-Key": ATLAN_API_KEY,
-
-          // ⬇️ WAJIB untuk Cloudflare
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
-          "Referer": "https://atlantich2h.com/",
-          "Origin": "https://atlantich2h.com",
+        params: {
+          api_key: ATLAN_API_KEY
         },
+        timeout: 15000
       }
     );
 
-    // ❗ Deteksi Cloudflare HTML
-    if (typeof response.data === "string") {
-      throw new Error("Cloudflare protection detected");
-    }
+    const data = response.data;
 
-    const extData = response.data;
-
-    if (extData.status === "true" && extData.data?.balance !== undefined) {
+    if (data.status === true && data.data?.balance !== undefined) {
       return res.json({
         success: true,
         profile: {
-          nama: extData.data.name,
-          user: extData.data.username,
-          email: extData.data.email,
-          hp: extData.data.phone,
-          saldo: Number(extData.data.balance),
-          status: extData.data.status,
-        },
+          nama: data.data.name,
+          user: data.data.username,
+          email: data.data.email,
+          hp: data.data.phone,
+          saldo: Number(data.data.balance),
+          status: data.data.status
+        }
       });
     }
 
-    throw new Error("Format respons Atlantic tidak valid");
-  } catch (error) {
-    console.error("❌ Atlantic Error:", error.message);
-
-    return res.status(503).json({
+    return res.status(400).json({
       success: false,
-      message: "Atlantic API sedang dalam proteksi Cloudflare",
+      message: "Response Atlantic tidak valid",
+      raw: data
+    });
+
+  } catch (err) {
+    console.error("❌ Atlantic API Error:", err.response?.data || err.message);
+
+    return res.status(502).json({
+      success: false,
+      message: "Gagal mengambil saldo provider Atlantic",
+      error: err.response?.data || err.message
     });
   }
 });
