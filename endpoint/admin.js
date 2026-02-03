@@ -23,11 +23,12 @@ const {
 
 // Import model OTP
 const { Otp } = require("../index.js");
+const URL_ATLANTIC= "https://atlantich2h.com";
 
 router.get("/atlantic/profile", requireAdmin, async (req, res) => {
   try {
     const response = await fetch(
-      `${BASE_URL}/get_profile`,
+      `${URL_ATLANTIC}/get_profile`,
       {
         method: "POST",
         headers: {
