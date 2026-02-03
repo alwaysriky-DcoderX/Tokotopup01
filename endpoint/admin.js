@@ -25,7 +25,6 @@ const {
 const { Otp } = require("../index.js");
 
 router.get("/atlantic/profile", requireAdmin, async (req, res) => {
-router.get("/atlantic/profile", requireAdmin, async (req, res) => {
   try {
     console.log("🔄 Mengambil data profile dari Atlantic API...");
 
