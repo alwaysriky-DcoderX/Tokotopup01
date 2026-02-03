@@ -23,31 +23,28 @@ const {
 
 // Import model OTP
 const { Otp } = require("../index.js");
-const URL_ATLANTIC= "https://atlantich2h.com";
 
 router.get("/atlantic/profile", requireAdmin, async (req, res) => {
   try {
-    const response = await fetch(
-      `${URL_ATLANTIC}/get_profile`,
+    console.log("🔄 Mengambil data profile dari Atlantic API...");
+
+    const response = await axios.post(
+      "https://atlantich2h.com/get_profile",
+      qs.stringify({
+        api_key: ATLAN_API_KEY
+      }),
       {
-        method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: new URLSearchParams({
-          api_key: process.env.ATLANTIC_API_KEY
-        })
+        timeout: 10000
       }
     );
 
-    const data = await response.json();
+    const data = response.data;
 
     if (!data?.data?.balance) {
-      return res.status(400).json({
-        success: false,
-        message: "Response Atlantic tidak valid",
-        raw: data
-      });
+      throw new Error("Response Atlantic tidak valid");
     }
 
     return res.json({
@@ -62,12 +59,13 @@ router.get("/atlantic/profile", requireAdmin, async (req, res) => {
       }
     });
 
-  } catch (err) {
-    console.error("❌ Atlantic API Error:", err.message);
+  } catch (error) {
+    console.error("❌ Atlantic Error:", error.response?.data || error.message);
 
-    return res.status(500).json({
+    return res.status(503).json({
       success: false,
-      message: "Gagal mengambil saldo Atlantic"
+      message: "Gagal mengambil data Atlantic",
+      error: error.response?.data || error.message
     });
   }
 });
