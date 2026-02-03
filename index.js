@@ -142,10 +142,10 @@ async function getCurrentUser(userId) {
     // Return dummy admin data
     return {
       _id: "custom-admin",
-      fullname: "Admin Felix",
-      username: "Felix",
+      fullname: "Admin Alwaysrikyshopreal",
+      username: "alwaysrikyshopreal",
       nomor: "-",
-      email: "admin@Felixtopup.com",
+      email: "muhammadraskina@gmail.com",
       profileUrl: "https://i.pinimg.com/236x/a2/80/e2/a280e2a50bf6240f29b49a72875adee5.jpg",
       saldo: 0,
       coin: 0,
