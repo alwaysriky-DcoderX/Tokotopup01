@@ -26,51 +26,51 @@ const { Otp } = require("../index.js");
 
 router.get("/atlantic/profile", requireAdmin, async (req, res) => {
   try {
-    console.log("🔄 Mengambil profile Atlantic (API RESMI)...");
-
-    const response = await axios.get(
-      "https://api.atlantich2h.com/get_profile",
+    const response = await fetch(
+      `${BASE_URL}/get_profile`,
       {
-        params: {
-          api_key: ATLAN_API_KEY
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
         },
-        timeout: 15000
+        body: new URLSearchParams({
+          api_key: process.env.ATLANTIC_API_KEY
+        })
       }
     );
 
-    const data = response.data;
+    const data = await response.json();
 
-    if (data.status === true && data.data?.balance !== undefined) {
-      return res.json({
-        success: true,
-        profile: {
-          nama: data.data.name,
-          user: data.data.username,
-          email: data.data.email,
-          hp: data.data.phone,
-          saldo: Number(data.data.balance),
-          status: data.data.status
-        }
+    if (!data?.data?.balance) {
+      return res.status(400).json({
+        success: false,
+        message: "Response Atlantic tidak valid",
+        raw: data
       });
     }
 
-    return res.status(400).json({
-      success: false,
-      message: "Response Atlantic tidak valid",
-      raw: data
+    return res.json({
+      success: true,
+      profile: {
+        nama: data.data.name,
+        user: data.data.username,
+        email: data.data.email,
+        hp: data.data.phone,
+        saldo: Number(data.data.balance),
+        status: data.data.status
+      }
     });
 
   } catch (err) {
-    console.error("❌ Atlantic API Error:", err.response?.data || err.message);
+    console.error("❌ Atlantic API Error:", err.message);
 
-    return res.status(502).json({
+    return res.status(500).json({
       success: false,
-      message: "Gagal mengambil saldo provider Atlantic",
-      error: err.response?.data || err.message
+      message: "Gagal mengambil saldo Atlantic"
     });
   }
 });
-
+  
 router.get("/data/users", requireAdmin, async (req, res) => {
   try {
     const users = await User.find({}, "-password -__v");
