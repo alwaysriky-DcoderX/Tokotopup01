@@ -1,5 +1,6 @@
 const express = require("express");
 const axios = require("axios");
+const fetch= require("node-fetch");
 const qs = require("qs");
 const app = express();
 const router = express.Router();
@@ -28,19 +29,18 @@ router.get("/atlantic/profile", requireAdmin, async (req, res) => {
   try {
     console.log('🔄 Mengambil data profile dari Atlantic API...');
     
-    const response = await axios.get(
-      "https://atlantich2h.com/get_profile",
-      {
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
-          "Authorization": `Bearer ${ATLAN_API_KEY}`,
-          "api_key": ATLAN_API_KEY
-        }
-      }
-    );
+const depositRes = await fetch("https://atlantich2h.com/get_profile", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      api_key: ATLAN_API_KEY,
+    })
+  });
 
-    const extData = response.data;
+  const depositData = await depositRes.json();
+const extData = depositData.data;
 
     // Validasi response structure
     if (extData.status === "true" && extData.data && extData.data.balance !== undefined) {
