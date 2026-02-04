@@ -13,7 +13,7 @@ const axios = require("axios");
 const qs = require("qs");
 const path = require("path");
 const app = express();
-const footer = 'FelixTopUp'
+const footer = 'RikyShop'
 const ATLAN_API_KEY = process.env.ATLAN_API_KEY;
 const BASE_URL = "https://atlantich2h.com";
 
