@@ -27,45 +27,45 @@ const { Otp } = require("../index.js");
 
 router.get("/atlantic/profile", requireAdmin, async (req, res) => {
   try {
-    console.log('🔄 Mengambil data profile dari Atlantic API...');
-    
-const depositRes = await fetch("https://atlantich2h.com/get_profile", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({
-      api_key: ATLAN_API_KEY,
-    })
-  });
+    console.log("🔄 Mengambil data profile dari Atlantic API...");
 
-  const depositData = await depositRes.json();
-const extData = depositData.data;
+    const depositRes = await fetch("https://atlantich2h.com/get_profile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        api_key: ATLAN_API_KEY
+      })
+    });
 
-    // Validasi response structure
-    if (extData.status === "true" && extData.data && extData.data.balance !== undefined) {
-      const result = {
+    const data = await depositRes.json();
+
+    // VALIDASI YANG BENAR
+    if (data.status === "true" && data.data?.balance !== undefined) {
+      return res.json({
         success: true,
-        info: extData.message,
+        info: data.message,
         profile: {
-          nama: extData.data.name,
-          user: extData.data.username,
-          email: extData.data.email,
-          hp: extData.data.phone,
-          saldo: parseFloat(extData.data.balance),
-          status: extData.data.status,
-        },
-      };
-      return res.json(result);
-    } else {
-      throw new Error('Format respons Atlantic tidak valid');
+          nama: data.data.name,
+          user: data.data.username,
+          email: data.data.email,
+          hp: data.data.phone,
+          saldo: Number(data.data.balance),
+          status: data.data.status
+        }
+      });
     }
+
+    throw new Error("Format response Atlantic tidak valid");
+
   } catch (error) {
-    console.error('❌ Error mengambil data Atlantic:', error.response?.data || error.message);
+    console.error("❌ Atlantic Error:", error.message);
+
     return res.status(500).json({
       success: false,
-      message: "Gagal mengambil data dari Atlantic API",
-      error: error.response?.data || error.message,
+      message: "Gagal mengambil data Atlantic API",
+      error: error.message
     });
   }
 });
