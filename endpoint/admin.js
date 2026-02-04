@@ -1,6 +1,6 @@
 const express = require("express");
 const axios = require("axios");
-const fetch= require("node-fetch");
+const fetch = require("node-fetch");
 const qs = require("qs");
 const app = express();
 const router = express.Router();
