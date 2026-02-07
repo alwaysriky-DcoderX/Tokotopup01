@@ -29,18 +29,19 @@ router.get("/atlantic/profile", requireAdmin, async (req, res) => {
   try {
     console.log('🔄 Mengambil data profile dari Atlantic API...');
     
-const depositRes = await fetch("https://atlantich2h.com/get_profile", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({
-      api_key: ATLAN_API_KEY,
-    })
-  });
+    const response = await axios.get(
+      "https://atlantich2h.com/get_profile",
+      {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${ATLAN_API_KEY}`,
+          "X-API-Key": ATLAN_API_KEY
+        }
+      }
+    );
 
-  const depositData = await depositRes.json();
-const extData = depositData.data;
+    const extData = response.data;
 
     // Validasi response structure
     if (extData.status === "true" && extData.data && extData.data.balance !== undefined) {
