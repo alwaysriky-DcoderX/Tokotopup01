@@ -979,6 +979,7 @@ app.post("/auth/change-number", requireLogin, async (req, res) => {
 });
 
 app.post("/profile/regenerate-apikey", requireLogin, async (req, res) => {
+app.post("/profile/regenerate-apikey", requireLogin, async (req, res) => {
   try {
     let newKey;
     let exists;
