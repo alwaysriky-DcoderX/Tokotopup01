@@ -1553,7 +1553,7 @@ app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, "public", "404.html"));
 });
 
-module.exports = app;
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
