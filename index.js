@@ -301,10 +301,7 @@ async function editHistoryOrder(userId, orderId, updateData) {
 }
 
 function generateApiKey() {
-  const randomPart =
-    Math.random().toString(36).substring(2, 10) +
-    Math.random().toString(36).substring(2, 10);
-  return `RikyShop_${randomPart}`;
+  return `RikyShop_${crypto.randomBytes(20).toString("hex")}`;
 }
 
 function generateReferralCode(username) {
