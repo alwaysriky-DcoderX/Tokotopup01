@@ -582,30 +582,38 @@
         });
 
         regenerateApiKeyBtn.addEventListener('click', async () => {
-            if (!confirm('Apakah Anda yakin ingin membuat API Key baru? API Key lama akan tidak berlaku lagi.')) {
-                return;
-            }
-            regenerateApiKeyBtn.disabled = true;
-            regenerateApiKeyBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Memproses...';
-            try {
-                const response = await fetch('/profile/regenerate-apikey', {
-    method: 'POST',
-    credentials: 'include'
-});
-                const data = await response.json();
-                if (data.success) {
-                    userApiKeyInput.value = data.newApiKey;
-                    showAlert('success', data.message);
-                } else {
-                    showAlert('danger', data.message || 'Gagal membuat API Key baru.');
-                }
-            } catch (error) {
-                showAlert('danger', `Error: ${error.message}`);
-            } finally {
-                regenerateApiKeyBtn.disabled = false;
-                regenerateApiKeyBtn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Regenerate API Key';
-            }
+    if (!confirm('Apakah Anda yakin ingin membuat API Key baru? API Key lama akan tidak berlaku lagi.')) {
+        return;
+    }
+
+    regenerateApiKeyBtn.disabled = true;
+    regenerateApiKeyBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm"></span> Memproses...';
+
+    try {
+        const response = await fetch('/profile/regenerate-apikey', {
+            method: 'POST',
+            credentials: 'include'
         });
+
+        const data = await response.json();
+        console.log('Regenerate response:', data);
+
+        if (data.success) {
+            // ✅ FIX DI SINI
+            userApiKeyInput.value = data.apiKey;
+            showAlert('success', data.message);
+        } else {
+            showAlert('danger', data.message || 'Gagal membuat API Key baru.');
+        }
+    } catch (error) {
+        showAlert('danger', `Error: ${error.message}`);
+    } finally {
+        regenerateApiKeyBtn.disabled = false;
+        regenerateApiKeyBtn.innerHTML =
+            '<i class="bi bi-arrow-repeat"></i> Regenerate API Key';
+    }
+});
 
         addIpForm.addEventListener('submit', async (event) => {
             event.preventDefault();
